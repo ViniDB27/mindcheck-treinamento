@@ -10,13 +10,15 @@ model = load_model('./alzheimer_model_v2.keras')
 class_indices = {'nonDement': 0, 'withDement': 1}
 labels = {v: k for k, v in class_indices.items()}
 
-def analisa_imagens(imageParam):
+def analisa_imagens(imageParam, imageName = None):
         imageParam = image.img_to_array(imageParam)
         imageParam /= 255
         imageParam = np.expand_dims(imageParam, axis = 0)
         previsao = model.predict(imageParam)
         classe_predita = labels[np.argmax(previsao)]
-        print([classe_predita, float(previsao[0][class_indices[classe_predita]])])
+        print(np.argmax(previsao))
+        print(previsao)
+        print([imageName, classe_predita, float(previsao[0][class_indices[classe_predita]])])
 
 
 folders = ['./images/nonDement', './images/withDement']
@@ -29,12 +31,12 @@ for folder in folders:
 images_loaded = []
 
 for image_temp in image_files[0]:
-    images_loaded.append(image.load_img('./images/nonDement/' + image_temp, target_size=(224, 224)))
+    images_loaded.append([image.load_img('./images/nonDement/' + image_temp, target_size=(224, 224)), image_temp])
 
 for image_temp in image_files[1]:
-    images_loaded.append(image.load_img('./images/withDement/' + image_temp, target_size=(224, 224)))
+    images_loaded.append([image.load_img('./images/withDement/' + image_temp, target_size=(224, 224)), image_temp])
 
 print(len(images_loaded))
 
 for img in images_loaded:
-    analisa_imagens(img)
+    analisa_imagens(img[0], img[1])
